@@ -10,8 +10,8 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            - run: docker build -t elemnt17/multicontainer-docker -f ./client/Dockerfile.dev ./client
-            - run: docker run -e CI=true elemnt17/multicontainer-docker npm test
+            - run: docker build -t elemnt17/react-test -f ./client/Dockerfile.dev ./client
+            - run: docker run -e CI=true elemnt17/react-test npm test
 
             - run: docker build -t elemnt17/multi-client ./client
             - run: docker build -t elemnt17/multi-nginx ./nginx
@@ -23,17 +23,17 @@ jobs:
             - run: docker push elemnt17/multi-server
             - run: docker push elemnt17/multi-worker
 
-            - name: Generate deployment package
-              run: zip -r deploy.zip . -x '*.git*'
+            # - name: Generate deployment package
+            #   run: zip -r deploy.zip . -x '*.git*'
 
-            - name: Deploy to EB
-              uses: einaregilsson/beanstalk-deploy@v18
-              with:
-                  aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-                  aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-                  application_name: multi-gh
-                  environment_name: Multigh-env
-                  existing_bucket_name: elasticbeanstalk-us-east-1-923445559289
-                  region: us-east-1
-                  version_label: ${{ github.sha }}
-                  deployment_package: deploy.zip
+            # - name: Deploy to EB
+            #   uses: einaregilsson/beanstalk-deploy@v18
+            #   with:
+            #       aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+            #       aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+            #       application_name: multi-gh
+            #       environment_name: Multigh-env
+            #       existing_bucket_name: elasticbeanstalk-us-east-1-923445559289
+            #       region: us-east-1
+            #       version_label: ${{ github.sha }}
+            #       deployment_package: deploy.zip
